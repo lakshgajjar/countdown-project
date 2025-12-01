@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Countdown & Quotes App</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    text-align: center;
+    padding: 20px;
+  }
+  #countdown {
+    font-size: 28px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+  #quote-box {
+    margin-top: 30px;
+    font-size: 22px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    min-height: 70px;
+  }
+  button {
+    margin: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Countdown & Quotes Application</h1>
+
+<div id="countdown">Loading countdown...</div><br>
+
+<button id="toggle-timer">Pause Countdown</button>
+<button id="reset-timer">Reset</button>  <!-- ✅ Reset button added here -->
+
+<div id="quote-box"></div>
+<button id="prev-quote">Previous</button>
+<button id="next-quote">Next</button>
+<script>
+const eventDateOriginal = new Date("Jan 1, 2026 00:00:00");
+let eventDate = new Date(eventDateOriginal);
+
+const countdownEl = document.getElementById("countdown");
+const toggleBtn = document.getElementById("toggle-timer");
+const resetBtn = document.getElementById("reset-timer");
+
+let countdownRunning = true;
+let countdownInterval;
+
+function startCountdown() {
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+  const now = new Date();
+  const diff = eventDate - now;
+
+  if (diff <= 0) {
+    clearInterval(countdownInterval);
+    countdownEl.textContent = "Time’s up! The event has started 🎉";
+    return;
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  countdownEl.textContent = `${days} Days ${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
+}
+
+toggleBtn.addEventListener("click", () => {
+  if (countdownRunning) {
+    clearInterval(countdownInterval);
+    toggleBtn.textContent = "Start Countdown";
+  } else {
+    startCountdown();
+    toggleBtn.textContent = "Pause Countdown";
+  }
+  countdownRunning = !countdownRunning;
+});
+
+resetBtn.addEventListener("click", () => {
+  clearInterval(countdownInterval);
+  eventDate = new Date(eventDateOriginal);
+  startCountdown();
+  toggleBtn.textContent = "Pause Countdown";
+  countdownRunning = true;
+  updateCountdown();
+});
+
+startCountdown();
+updateCountdown();
+
+const quotes = [
+  "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+  "Believe you can and you're halfway there.",
+  "Dream big and dare to fail.",
+  "Hardships prepare ordinary people for extraordinary destinies.",
+  "The future depends on what you do today.",
+  "Every moment is a fresh beginning."
+];
+
+let quoteIndex = 0;
+const quoteBox = document.getElementById("quote-box");
+
+function showQuote() {
+  quoteBox.textContent = quotes[quoteIndex];
+}
+
+function nextQuote() {
+  quoteIndex = (quoteIndex + 1) % quotes.length;
+  showQuote();
+}
+
+function prevQuote() {
+  quoteIndex = (quoteIndex - 1 + quotes.length) % quotes.length;
+  showQuote();
+}
+
+document.getElementById("next-quote").addEventListener("click", nextQuote);
+document.getElementById("prev-quote").addEventListener("click", prevQuote);
+
+showQuote();
+
+setInterval(nextQuote, 4000);
+
+const modal = document.getElementById("modal");
+document.getElementById("close-modal").addEventListener("click", () => {
+  modal.style.display = "none";
+});
+</script>
+</body>
+</html>
